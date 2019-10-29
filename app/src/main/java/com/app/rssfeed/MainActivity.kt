@@ -11,6 +11,7 @@ import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,7 +23,8 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "onCreate Called")
         val downLoadData = DownloadData()
-        downLoadData.execute("URL is here")
+        downLoadData.execute("https://rss.itunes.apple.com/api/v1/us/apple-music/coming-soon/all/10/explicit.json")
+//        textView.setText(file as CharSequence)
     }
 
     companion object {
@@ -56,44 +58,39 @@ class MainActivity : AppCompatActivity() {
                 super.onPreExecute()
                 Log.d(TAG, "onPreExecute Called")
             }
-        }
-    }
 
-    private fun downloadXML(urlPath: String?): String {
-        val xmlResult = StringBuilder()
+            private fun downloadXML(urlPath: String?): String {
+                val xmlResult = StringBuilder()
 
-        try {
-            val url = URL(urlPath)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            val response = connection.responseCode
+                try {
+                    val url = URL(urlPath)
+                    val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+                    val response = connection.responseCode
 
-            Log.d(TAG, "Response code $response")
-//            val inputStream = connection.inputStream
-//            val inputStreamReader = InputStreamReader(inputStream)
-//            val reader = BufferedReader(inputStreamReader)
+                    Log.d(TAG, "Response code $response")
 
-            val reader = BufferedReader(InputStreamReader(connection.inputStream))
+                    connection.inputStream.buffered().reader()
+                        .use { xmlResult.append(it.readText()) }
 
-            val inputBuffer = CharArray(500)
-            var charRead = 0
-            while (charRead>=0){
-                charRead = reader.read(inputBuffer)
-                if (charRead>0){
-                    xmlResult.append(String(inputBuffer,0,charRead))
+                    Log.d(TAG, "Successfully got the info: ${xmlResult.length} Bytes")
+                    return xmlResult.toString()
+
+
+                } catch (e: Exception) {
+                    val errorMessage: String = when (e) {
+                        is MalformedURLException -> "Invalid URL ${e.message}"
+                        is IOException -> "IO Exception ${e.message}"
+                        is SecurityException -> {
+                            e.printStackTrace()
+                            "Internet Needed? ${e.message}"
+
+                        }
+                        else -> "Unknown error ${e.message}"
+                    }
+                    Log.e(TAG, errorMessage)
                 }
+                return "Nothing is received"
             }
-
-            reader.close()
-
-            Log.d(TAG, "Successfully got the info: ${xmlResult.length} Bytes")
-            return xmlResult.toString()
-
-        } catch (e: MalformedURLException) {
-            Log.e(TAG, e.message!!)
-        } catch (e: IOException) {
-            Log.e(TAG, e.message!!)
-        } catch (e: Exception) {
-            Log.e(TAG, e.message!!)
         }
     }
 }
