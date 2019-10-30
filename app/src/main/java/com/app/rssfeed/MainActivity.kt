@@ -1,17 +1,13 @@
 package com.app.rssfeed
 
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import java.io.BufferedReader
+import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
-import java.io.InputStreamReader
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "onCreate Called")
         val downLoadData = DownloadData()
-        downLoadData.execute("https://rss.itunes.apple.com/api/v1/us/apple-music/coming-soon/all/10/explicit.json")
+        downLoadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
 //        textView.setText(file as CharSequence)
     }
 
@@ -35,9 +31,11 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "onProgressUpdate Called")
             }
 
-            override fun onPostExecute(result: String?) {
+            override fun onPostExecute(result: String) {
                 super.onPostExecute(result)
-                Log.d(TAG, "onPostExecute Called $result")
+//                Log.d(TAG, "onPostExecute Called $result")
+                var parseXMLData = ParseXMLData()
+                parseXMLData.parse(result)
             }
 
             override fun doInBackground(vararg params: String?): String {
@@ -49,17 +47,12 @@ class MainActivity : AppCompatActivity() {
                 return rssFeed
             }
 
-            override fun onCancelled(result: String?) {
-                super.onCancelled(result)
-                Log.d(TAG, "onCancelled Called")
-            }
-
             override fun onPreExecute() {
                 super.onPreExecute()
                 Log.d(TAG, "onPreExecute Called")
             }
 
-            private fun downloadXML(urlPath: String?): String {
+            private fun downloadXMLLongMethod(urlPath: String?): String {
                 val xmlResult = StringBuilder()
 
                 try {
@@ -90,6 +83,10 @@ class MainActivity : AppCompatActivity() {
                     Log.e(TAG, errorMessage)
                 }
                 return "Nothing is received"
+            }
+
+            private fun downloadXML(urlPath: String?): String {
+                return URL(urlPath).readText()
             }
         }
     }
