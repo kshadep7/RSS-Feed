@@ -8,7 +8,18 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 
-class FeedCustomAdapter(context: Context, private val resource: Int, private val applications: List<FeedEntry>) :
+class ViewHolder(view: View) {
+    val tvName: TextView = view.findViewById(R.id.tvName)
+    val tvArtist: TextView = view.findViewById(R.id.tvArtist)
+    val tvSummary: TextView = view.findViewById(R.id.tvSummary)
+
+}
+
+class FeedCustomAdapter(
+    context: Context,
+    private val resource: Int,
+    private val applications: List<FeedEntry>
+) :
     ArrayAdapter<FeedEntry>(context, resource) {
 
     private val TAG = "FeedCustomAdapter"
@@ -21,16 +32,25 @@ class FeedCustomAdapter(context: Context, private val resource: Int, private val
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         Log.d(TAG, "getView() called")
-        val view = inflater.inflate(resource, parent, false)
+        val viewHolder: ViewHolder
+        val view: View
+        if (convertView != null) {
+            view  = convertView
+            viewHolder = view.tag as ViewHolder
+        } else {
+            view = inflater.inflate(resource, parent, false)
+            viewHolder = ViewHolder(view)
+            view.tag = viewHolder
+        }
 
-        val tvName = view.findViewById<TextView>(R.id.tvName)
-        val tvArtist = view.findViewById<TextView>(R.id.tvArtist)
-        val tvSummary = view.findViewById<TextView>(R.id.tvSummary)
+//        val tvName = view.findViewById<TextView>(R.id.tvName)
+//        val tvArtist = view.findViewById<TextView>(R.id.tvArtist)
+//        val tvSummary = view.findViewById<TextView>(R.id.tvSummary)
 
         val currentRecord = applications[position]
-        tvName.text = currentRecord.name
-        tvArtist.text = currentRecord.artist
-        tvSummary.text = currentRecord.summary
+        viewHolder.tvName.text = currentRecord.name
+        viewHolder.tvArtist.text = currentRecord.artist
+        viewHolder.tvSummary.text = currentRecord.summary
 
         return view
 

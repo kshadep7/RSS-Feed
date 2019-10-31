@@ -4,13 +4,9 @@ import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
 import java.net.URL
 import kotlin.properties.Delegates
 
@@ -87,38 +83,38 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "onPreExecute Called")
             }
 
-            private fun downloadXMLLongMethod(urlPath: String?): String {
-                val xmlResult = StringBuilder()
-
-                try {
-                    val url = URL(urlPath)
-                    val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-                    val response = connection.responseCode
-
-                    Log.d(TAG, "Response code $response")
-
-                    connection.inputStream.buffered().reader()
-                        .use { xmlResult.append(it.readText()) }
-
-                    Log.d(TAG, "Successfully got the info: ${xmlResult.length} Bytes")
-                    return xmlResult.toString()
-
-
-                } catch (e: Exception) {
-                    val errorMessage: String = when (e) {
-                        is MalformedURLException -> "Invalid URL ${e.message}"
-                        is IOException -> "IO Exception ${e.message}"
-                        is SecurityException -> {
-                            e.printStackTrace()
-                            "Internet Needed? ${e.message}"
-
-                        }
-                        else -> "Unknown error ${e.message}"
-                    }
-                    Log.e(TAG, errorMessage)
-                }
-                return "Nothing is received"
-            }
+//            private fun downloadXMLLongMethod(urlPath: String?): String {
+//                val xmlResult = StringBuilder()
+//
+//                try {
+//                    val url = URL(urlPath)
+//                    val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+//                    val response = connection.responseCode
+//
+//                    Log.d(TAG, "Response code $response")
+//
+//                    connection.inputStream.buffered().reader()
+//                        .use { xmlResult.append(it.readText()) }
+//
+//                    Log.d(TAG, "Successfully got the info: ${xmlResult.length} Bytes")
+//                    return xmlResult.toString()
+//
+//
+//                } catch (e: Exception) {
+//                    val errorMessage: String = when (e) {
+//                        is MalformedURLException -> "Invalid URL ${e.message}"
+//                        is IOException -> "IO Exception ${e.message}"
+//                        is SecurityException -> {
+//                            e.printStackTrace()
+//                            "Internet Needed? ${e.message}"
+//
+//                        }
+//                        else -> "Unknown error ${e.message}"
+//                    }
+//                    Log.e(TAG, errorMessage)
+//                }
+//                return "Nothing is received"
+//            }
 
             private fun downloadXML(urlPath: String?): String {
                 return URL(urlPath).readText()
