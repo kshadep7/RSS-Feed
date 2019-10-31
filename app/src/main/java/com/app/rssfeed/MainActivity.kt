@@ -1,31 +1,52 @@
 package com.app.rssfeed
 
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
+
+    private val downLoadData by lazy { DownloadData(this, xmlListView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         Log.d(TAG, "onCreate Called")
-        val downLoadData = DownloadData()
-        downLoadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
+        downLoadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=25/xml")
 //        textView.setText(file as CharSequence)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        downLoadData.cancel(true)
+    }
+
     companion object {
-        private class DownloadData : AsyncTask<String, Void, String>() {
-            private val TAG = "AsyncTask"
+        private class DownloadData(context: Context, listView: ListView) :
+            AsyncTask<String, Void, String>() {
+            private val TAG = "DownLoadData"
+
+            var dataContext: Context by Delegates.notNull()
+            var dataListView: ListView by Delegates.notNull()
+
+            init {
+                dataContext = context
+                dataListView = listView
+            }
+
             override fun onProgressUpdate(vararg values: Void?) {
                 super.onProgressUpdate(*values)
                 Log.d(TAG, "onProgressUpdate Called")
@@ -36,6 +57,20 @@ class MainActivity : AppCompatActivity() {
 //                Log.d(TAG, "onPostExecute Called $result")
                 var parseXMLData = ParseXMLData()
                 parseXMLData.parse(result)
+
+                val arrayAdapter = FeedCustomAdapter(
+                    dataContext,
+                    R.layout.list_record,
+                    parseXMLData.applications
+                )
+                dataListView.adapter = arrayAdapter
+//
+//                val arrayAdapter = ArrayAdapter<FeedEntry>(
+//                    dataContext,
+//                    R.layout.list_view_text,
+//                    parseXMLData.applications
+//                )
+//                dataListView.adapter = arrayAdapter
             }
 
             override fun doInBackground(vararg params: String?): String {

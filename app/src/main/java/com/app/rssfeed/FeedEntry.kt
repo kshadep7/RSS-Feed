@@ -14,7 +14,6 @@ class FeedEntry {
             Artist: $artist
             Release Date: $releaseDate
             Image URL: $imageURl
-            Summary: $summary
         """.trimIndent()
     }
 
