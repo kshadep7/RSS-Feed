@@ -4,6 +4,8 @@ import android.util.Log
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ParseXMLData {
 
@@ -25,7 +27,7 @@ class ParseXMLData {
             var currentRecord = FeedEntry()
 
             while (eventType != XmlPullParser.END_DOCUMENT) {
-                val tagName = xpp.name?.toLowerCase()
+                val tagName = xpp.name?.toLowerCase(Locale.US)
                 when (eventType) {
 
                     XmlPullParser.START_TAG -> {
@@ -60,10 +62,10 @@ class ParseXMLData {
                 eventType = xpp.next()
             }
 
-            for (app in applications) {
-                Log.d(TAG, "***************************")
-                Log.d(TAG, app.toString())
-            }
+//            for (app in applications) {
+//                Log.d(TAG, "***************************")
+//                Log.d(TAG, app.toString())
+//            }
 
         } catch (e: Exception) {
             e.printStackTrace()
