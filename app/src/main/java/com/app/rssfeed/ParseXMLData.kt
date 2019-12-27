@@ -1,19 +1,18 @@
 package com.app.rssfeed
 
-import android.util.Log
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
+private const val TAG = "ParseXMLData"
+
 class ParseXMLData {
 
-    private val TAG = "ParseXMLData"
     var applications = ArrayList<FeedEntry>()
 
     fun parse(xmlData: String): Boolean {
-        Log.d(TAG, "parse fun called from ParseXMLData with $xmlData")
+//        Log.d(TAG, "parse fun called from ParseXMLData with $xmlData")
         var status = true
         var inEntry = false
         var textValue = ""
@@ -31,7 +30,7 @@ class ParseXMLData {
                 when (eventType) {
 
                     XmlPullParser.START_TAG -> {
-                        Log.d(TAG, "parse: Starting tag for $tagName")
+//                        Log.d(TAG, "parse: Starting tag for $tagName")
                         if (tagName == "entry") {
                             inEntry = true
                         }
@@ -40,7 +39,7 @@ class ParseXMLData {
                     XmlPullParser.TEXT -> textValue = xpp.text
 
                     XmlPullParser.END_TAG -> {
-                        Log.d(TAG, "parse: Ending tag for $tagName")
+//                        Log.d(TAG, "parse: Ending tag for $tagName")
                         if (inEntry) {
                             when (tagName) {
                                 "entry" -> {
